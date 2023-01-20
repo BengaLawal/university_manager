@@ -1,16 +1,16 @@
 {
-    "University of the Western Cape": {
-        "program": "Bsc Biotechnology",
-        "link": "uwc.ac.za",
-        "additional info": "10/10 experience. Will recommend\n",
-        "country": "South Africa",
+    "test": {
+        "program": "1",
+        "link": "2",
+        "additional info": "3\n",
+        "country": "4",
         "status": "Completed"
     },
-    "Test": {
-        "program": "123",
-        "link": "123",
-        "additional info": "Testing Testing 123\n",
-        "country": "Testa",
-        "status": "Tested"
+    "university of the western cape": {
+        "program": "BSc Biotechnology",
+        "link": "uwc.ac.za",
+        "additional info": "10/10 experience\n",
+        "country": "South Africa",
+        "status": "Completed"
     }
 }

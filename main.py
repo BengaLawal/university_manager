@@ -4,7 +4,7 @@ import json
 
 # ---------------------------- SAVE & SEARCH INPUT ------------------------------- #
 def save():
-    """Add the info from the inputs to data.json"""
+    """Add the inputs from the entry fields to data.json"""
     # get data from input
     university = university_input.get()
     program = program_input.get()
@@ -13,9 +13,28 @@ def save():
     country = country_input.get()
     status = status_input.get()
 
+    # entry_field_list = [university, program, link, add_info, country, status]
+    # def data():
+    #     """return list of data from entry_field_list"""
+    #     list_lowered = [i.lower() for i in entry_field_list]
+    #     return list_lowered
+
+    ##data storage format
+    # new_data = {
+    #     data()[0]: {
+    #         "program": data()[1],
+    #         "link": data()[2],
+    #         "additional info": data()[3],
+    #         "country": data()[4],
+    #         "status": data()[5],
+    #     }
+    # }
+
     # data storage format
+
+    university_lower = university.lower()
     new_data = {
-        university: {
+        university_lower: {
             "program": program,
             "link": link,
             "additional info": add_info,
@@ -24,21 +43,23 @@ def save():
         }
     }
 
-    # if university or length field is empty show messagebox
+    # show messagebox if entry field is empty
     if len(university) == 0 or len(link) == 0 or len(add_info) == 0 or len(country) ==0 or len(status) == 0:
         messagebox.showinfo(title="Empty box", message="Please don't leave any fields empty")
-
     else:
         try:  # read from file
             with open("data.json", mode="r") as data_file:
                 data = json.load(data_file)
-        except FileNotFoundError:  # if file not found, write new file and add new_data
+        except FileNotFoundError:  # file not found? write new file and add new_data
             with open("data.json", "w") as data_file:
                 json.dump(new_data, data_file, indent=4)
         else:  # if file is found, add new_data to new line
-            data.update(new_data)
-            with open("data.json", mode="w") as data_file:
-                json.dump(data, data_file, indent=4)
+            if university_lower not in data:
+                data.update(new_data)
+                with open("data.json", mode="w") as data_file:
+                    json.dump(data, data_file, indent=4)
+            else:
+                messagebox.showinfo(title="Error", message="University exists in the data")
         finally:  # clear the input fields
             university_input.delete(0, END)
             link_input.delete(0, END)
@@ -49,7 +70,7 @@ def save():
 
 def search():
     """Search through data.json and provide found details in new window"""
-    search_term = search_input.get()
+    search_term = search_input.get().lower()
     try:
         with open("data.json") as data_file:
             json_data = json.load(data_file)
