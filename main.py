@@ -13,25 +13,6 @@ def save():
     country = country_input.get()
     status = status_input.get()
 
-    # entry_field_list = [university, program, link, add_info, country, status]
-    # def data():
-    #     """return list of data from entry_field_list"""
-    #     list_lowered = [i.lower() for i in entry_field_list]
-    #     return list_lowered
-
-    ##data storage format
-    # new_data = {
-    #     data()[0]: {
-    #         "program": data()[1],
-    #         "link": data()[2],
-    #         "additional info": data()[3],
-    #         "country": data()[4],
-    #         "status": data()[5],
-    #     }
-    # }
-
-    # data storage format
-
     university_lower = university.lower()
     new_data = {
         university_lower: {
