@@ -9,7 +9,7 @@ def save():
     university = university_input.get()
     program = program_input.get()
     link = link_input.get()
-    add_info = additional_note_input.get("1.0", "end-1c")  # +1c deletes new line
+    add_info = additional_note_input.get("1.0", "end-1c")  # -1c deletes new line
     country = country_input.get()
     status = status_input.get()
 
