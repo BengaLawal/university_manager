@@ -9,7 +9,7 @@ def save():
     university = university_input.get()
     program = program_input.get()
     link = link_input.get()
-    add_info = additional_note_input.get("1.0", END)
+    add_info = additional_note_input.get("1.0", "end-1c")  # +1c deletes new line
     country = country_input.get()
     status = status_input.get()
 
@@ -70,6 +70,21 @@ def save():
 
 def search():
     """Search through data.json and provide found details in new window"""
+
+    def update_json():
+        """Save changes made the value/s of the searched key"""
+        with open("data.json", mode='r+') as data:
+            json_data_ = json.load(data)
+
+        json_data_[search_term]["program"] = program.get()
+        json_data_[search_term]["link"] = link.get()
+        json_data_[search_term]["additional info"] = additional_note.get("1.0","end-1c")
+        json_data_[search_term]["country"] = country.get()
+        json_data_[search_term]["status"] = status.get()
+
+        with open("data.json", mode="w") as data:
+            json.dump(json_data_, data, indent=4)
+
     search_term = search_input.get().lower()
     try:
         with open("data.json") as data_file:
@@ -83,19 +98,43 @@ def search():
             top_window.title(f'{search_term}')
             top_window.config(bg='white')
 
-            program = Label(top_window, text=f"Program: {json_data[search_term]['program']}", bg="white", highlightthickness=0)
-            program.grid(row=1, column=0, pady=10)
-            link = Label(top_window, text=f"Link: {json_data[search_term]['link']}", bg="white")
-            link.grid(row=2, column=0, pady=10)
-            additional_note= Label(top_window, text=f"Additional note: {json_data[search_term]['additional info']}", bg="white", highlightthickness=0)
-            additional_note.grid(row=3, column=0, pady=10)
-            country = Label(top_window, text=f"Country: {json_data[search_term]['country']}", bg="white", highlightthickness=0)
-            country.grid(row=4, column=0, pady=10)
-            status = Label(top_window, text=f"status: {json_data[search_term]['status']}", bg="white", highlightthickness=0)
-            status.grid(row=5, column=0, pady=10)
+            # labels
+            tw_program_label = Label(top_window, text="Program:", bg="white", highlightthickness=0)
+            tw_program_label.grid(row=0, column=0, pady=5)
+            tw_link_label = Label(top_window, text="Link:", bg="white")
+            tw_link_label.grid(row=1, column=0, pady=5)
+            tw_additional_note_label = Label(top_window, text="Additional note:", bg="white", highlightthickness=0)
+            tw_additional_note_label.grid(row=2, column=0, pady=5)
+            tw_country_label = Label(top_window, text="Country:", bg="white", highlightthickness=0)
+            tw_country_label.grid(row=6, column=0, pady=5)
+            tw_status_label = Label(top_window, text="status:", bg="white", highlightthickness=0)
+            tw_status_label.grid(row=7, column=0, pady=5)
+
+            # default texts in entry fields
+            program = Entry(top_window, width=36)
+            program.insert(0, f"{json_data[search_term]['program']}")
+            program.grid(row=0, column=1, columnspan=2, pady=5)
+            link = Entry(top_window, width=36)
+            link.insert(0, f"{json_data[search_term]['link']}")
+            link.grid(row=1, column=1, columnspan=2, pady=5)
+            additional_note = Text(top_window, width=38, height=3, )
+            additional_note.insert(1.0, f"{json_data[search_term]['additional info']}")
+            additional_note.grid(row=2, column=1, rowspan=3, columnspan=2, pady=5)
+            country = Entry(top_window, width=36)
+            country.insert(0, f"{json_data[search_term]['country']}")
+            country.grid(row=6, column=1, columnspan=2, pady=5)
+            status = Entry(top_window, width=36)
+            status.insert(0, f"{json_data[search_term]['status']}")
+            status.grid(row=7, column=1, columnspan=2, pady=5)
+
+            # save change and close window button
+            save_changes_button = Button(top_window, text='Save change', bg="#d0f2c7", width=10, command=update_json)
+            save_changes_button.grid(row=8, column=1, pady=20)
+            close_window_button = Button(top_window, text='Close', bg="#ff4040", width=10, command=top_window.destroy)
+            close_window_button.grid(row=9, column=1, pady=20)
 
             top_window.wm_transient(window)
-        else:  # if term is not found show messagebox
+        else:  # if search term is not found show messagebox
             messagebox.showinfo(title="Error", message="University not found.\nCheck your spelling")
 
 # ---------------------------- PARENT WINDOW ------------------------------- #
@@ -150,5 +189,3 @@ search_input = Entry(window, width=36)
 search_input.grid(row=11, column=1,)
 
 window.mainloop()
-
-

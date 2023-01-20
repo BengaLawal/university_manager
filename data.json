@@ -1,16 +1,16 @@
 {
-    "test": {
-        "program": "1",
-        "link": "2",
-        "additional info": "3\n",
-        "country": "4",
-        "status": "Completed"
-    },
     "university of the western cape": {
         "program": "BSc Biotechnology",
         "link": "uwc.ac.za",
-        "additional info": "10/10 experience\n",
+        "additional info": "10/10 experience",
         "country": "South Africa",
+        "status": "Completed in 2021"
+    },
+    "test": {
+        "program": "test",
+        "link": "www.test.com",
+        "additional info": "This is a test.",
+        "country": "Republic of Test",
         "status": "Completed"
     }
 }
