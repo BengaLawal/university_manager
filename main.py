@@ -1,8 +1,10 @@
+import tkinter
 from tkinter import *
 from tkinter import messagebox
+from tkinter import ttk
 import json
 
-# ---------------------------- SAVE & SEARCH INPUT ------------------------------- #
+# ---------------------------- SAVE & SHOW ALL ------------------------------- #
 def save():
     """Add the inputs from the entry fields to data.json"""
     # get data from input
@@ -49,74 +51,104 @@ def save():
             country_input.delete(0, END)
             status_input.delete(0, END)
 
-def search():
-    """Search through data.json and provide found details in new window"""
+def show_all():
+    """Show all data in treeview"""
+    def show_item_info(event):
+        """action when a university in treeview is double-clicked"""
+        def update_json():
+            """Save changes made"""
 
-    def update_json():
-        """Save changes made the value/s of the searched key"""
+            value["program"] = program.get()
+            value["link"] = link.get()
+            value["additional info"] = additional_note.get("1.0", "end-1c")
+            value["country"] = country.get()
+            value["status"] = status.get()
+
+            with open("data.json", mode="w") as info:
+                json.dump(json_data_, info, indent=4)
+
+        selected_uni_iid = tree_view.focus()
+        index = tree_view.index(selected_uni_iid)
+        uni_key = list(json_data_)[index]
+        value = list(json_data_.values())[index]
+        print(value)
+
+        top_window = Toplevel(show_all_window)
+        top_window.title(uni_key)
+        top_window.config(bg='white')
+        top_window.configure(pady=10, padx=10)
+
+
+        # labels
+        tw_program_label = Label(top_window, text="Program:", bg="white", highlightthickness=0)
+        tw_program_label.grid(row=0, column=0, pady=5)
+        tw_link_label = Label(top_window, text="Link:", bg="white")
+        tw_link_label.grid(row=1, column=0, pady=5)
+        tw_additional_note_label = Label(top_window, text="Additional note:", bg="white", highlightthickness=0)
+        tw_additional_note_label.grid(row=2, column=0, pady=5)
+        tw_country_label = Label(top_window, text="Country:", bg="white", highlightthickness=0)
+        tw_country_label.grid(row=6, column=0, pady=5)
+        tw_status_label = Label(top_window, text="status:", bg="white", highlightthickness=0)
+        tw_status_label.grid(row=7, column=0, pady=5)
+
+        # default texts in entry fields
+        program = Entry(top_window, width=36)
+        program.insert(0, f"{value['program']}")
+        program.grid(row=0, column=1, columnspan=2, pady=5)
+        link = Entry(top_window, width=36)
+        link.insert(0, f"{value['link']}")
+        link.grid(row=1, column=1, columnspan=2, pady=5)
+        additional_note = Text(top_window, width=38, height=3, )
+        additional_note.insert(1.0, f"{value['additional info']}")
+        additional_note.grid(row=2, column=1, rowspan=3, columnspan=2, pady=5)
+        country = Entry(top_window, width=36)
+        country.insert(0, f"{value['country']}")
+        country.grid(row=6, column=1, columnspan=2, pady=5)
+        status = Entry(top_window, width=36)
+        status.insert(0, f"{value['status']}")
+        status.grid(row=7, column=1, columnspan=2, pady=5)
+
+        # save change and close window button
+        save_changes_button = Button(top_window, text='Save change', bg="#d0f2c7", width=10, command=update_json)
+        save_changes_button.grid(row=8, column=1, pady=20)
+        close_window_button = Button(top_window, text='Close', bg="#ff4040", width=10, command=top_window.destroy)
+        close_window_button.grid(row=9, column=1, pady=20)
+
+        top_window.wm_transient(show_all_window)
+
+    try:
         with open("data.json", mode='r+') as data:
             json_data_ = json.load(data)
-
-        json_data_[search_term]["program"] = program.get()
-        json_data_[search_term]["link"] = link.get()
-        json_data_[search_term]["additional info"] = additional_note.get("1.0","end-1c")
-        json_data_[search_term]["country"] = country.get()
-        json_data_[search_term]["status"] = status.get()
-
-        with open("data.json", mode="w") as data:
-            json.dump(json_data_, data, indent=4)
-
-    search_term = search_input.get().lower()
-    try:
-        with open("data.json") as data_file:
-            json_data = json.load(data_file)
     except FileNotFoundError:
-        messagebox.showinfo(title="Error", message="No Data File Found.")
+        messagebox.showinfo(title="Error", message="You currently do not have any saved data")
     else:
-        if search_term in json_data:  # if input is a key in data.json
-            # window for searched term
-            top_window = Toplevel(window)
-            top_window.title(f'{search_term}')
-            top_window.config(bg='white')
+        show_all_window = Toplevel(window)
+        show_all_window.title('Data')
+        show_all_window.config(bg='white')
+        show_all_window.configure(pady=10, padx=10)
 
-            # labels
-            tw_program_label = Label(top_window, text="Program:", bg="white", highlightthickness=0)
-            tw_program_label.grid(row=0, column=0, pady=5)
-            tw_link_label = Label(top_window, text="Link:", bg="white")
-            tw_link_label.grid(row=1, column=0, pady=5)
-            tw_additional_note_label = Label(top_window, text="Additional note:", bg="white", highlightthickness=0)
-            tw_additional_note_label.grid(row=2, column=0, pady=5)
-            tw_country_label = Label(top_window, text="Country:", bg="white", highlightthickness=0)
-            tw_country_label.grid(row=6, column=0, pady=5)
-            tw_status_label = Label(top_window, text="status:", bg="white", highlightthickness=0)
-            tw_status_label.grid(row=7, column=0, pady=5)
+        # frame = Frame(show_all_window, width=1, height=1)
+        # frame.grid(column=0, row=0, )
+        # frame.pack_propagate(False)
 
-            # default texts in entry fields
-            program = Entry(top_window, width=36)
-            program.insert(0, f"{json_data[search_term]['program']}")
-            program.grid(row=0, column=1, columnspan=2, pady=5)
-            link = Entry(top_window, width=36)
-            link.insert(0, f"{json_data[search_term]['link']}")
-            link.grid(row=1, column=1, columnspan=2, pady=5)
-            additional_note = Text(top_window, width=38, height=3, )
-            additional_note.insert(1.0, f"{json_data[search_term]['additional info']}")
-            additional_note.grid(row=2, column=1, rowspan=3, columnspan=2, pady=5)
-            country = Entry(top_window, width=36)
-            country.insert(0, f"{json_data[search_term]['country']}")
-            country.grid(row=6, column=1, columnspan=2, pady=5)
-            status = Entry(top_window, width=36)
-            status.insert(0, f"{json_data[search_term]['status']}")
-            status.grid(row=7, column=1, columnspan=2, pady=5)
+        columns = ('universities',)  # column identifiers - tuple
+        tree_view = ttk.Treeview(show_all_window, columns=columns, height=5, show='headings', style='Treeview', )
+        tree_view.heading('universities', text='All Universities')
+        tree_view.column(column='universities', width=750, stretch=True)
+        # tree_view.rowconfigure(0, weight=1,) # configure the root grid rows
+        tree_view.grid(column=0, row=0,)
 
-            # save change and close window button
-            save_changes_button = Button(top_window, text='Save change', bg="#d0f2c7", width=10, command=update_json)
-            save_changes_button.grid(row=8, column=1, pady=20)
-            close_window_button = Button(top_window, text='Close', bg="#ff4040", width=10, command=top_window.destroy)
-            close_window_button.grid(row=9, column=1, pady=20)
+        tree_view.bind('<Double-1>', show_item_info)
 
-            top_window.wm_transient(window)
-        else:  # if search term is not found show messagebox
-            messagebox.showinfo(title="Error", message="University not found.\nCheck your spelling")
+        tree_view_config = ttk.Style()
+        tree_view_config.configure('Treeview', rowheight=35)
+
+        for key in json_data_:
+            tree_view.insert("", tkinter.END, values=(key,))
+
+        scrollbar = ttk.Scrollbar(show_all_window, orient=tkinter.VERTICAL, command=tree_view.yview)
+        tree_view.configure(yscrollcommand=scrollbar.set)
+        scrollbar.grid(column=1, row=0, sticky=tkinter.N+tkinter.S)
 
 # ---------------------------- PARENT WINDOW ------------------------------- #
 
@@ -128,7 +160,7 @@ window.config(padx=50, pady=50, bg="white")
 canvas = Canvas(height=200, width=200, bg="white", highlightthickness=0)
 logo_image = PhotoImage(file="images.png")
 canvas.create_image(100, 100, image=logo_image)
-canvas.grid(row=0, column=0, columnspan=2, pady=10)
+canvas.grid(row=0, column=1, columnspan=1, pady=10)
 
 # labels
 university_label = Label(window, text="University:", bg="white", highlightthickness=0)
@@ -163,10 +195,7 @@ status_input.grid(row=9, column=1, columnspan=2, pady=5)
 add_button = Button(window, text="Add", bg="#d0f2c7", width=35, command=save)
 add_button.grid(row=10, column=1, columnspan=2, pady=10)
 
-# search button and input field
-search_button = Button(window, text='Search', bg="#d0f2c7", width=10, command=search)
-search_button.grid(row=11, column=0)
-search_input = Entry(window, width=36)
-search_input.grid(row=11, column=1,)
+show_all_button = Button(window, text='Show All', bg="#d0f2c7", width=35, command=show_all)
+show_all_button.grid(row=11, column=1, columnspan=2, pady=10)
 
 window.mainloop()
